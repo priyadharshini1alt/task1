@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Priya Dharshini — Frontend Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0f1115;
+    --panel: #171a21;
+    --panel-2: #1d212b;
+    --border: #2a2f3a;
+    --text: #e7e5df;
+    --text-dim: #9aa0ac;
+    --accent: #e3b341;
+    --accent-2: #57c7b0;
+    --radius: 8px;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  a{ color: inherit; text-decoration:none; }
+  ul{ list-style:none; }
+  img{ max-width:100%; display:block; }
+  section{ padding: 110px 24px 90px; max-width: 1080px; margin: 0 auto; }
+  h1,h2,h3{ font-family: var(--font-display); letter-spacing: -0.01em; }
+  ::selection{ background: var(--accent); color: #0f1115; }
+
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent-2);
+    display:flex; align-items:center; gap:10px;
+    margin-bottom: 14px;
+  }
+  .eyebrow::before{
+    content:"";
+    width: 18px; height: 1px; background: var(--accent-2);
+  }
+
+  /* ---------- NAV / FILE TABS ---------- */
+  header{
+    position: fixed; top:0; left:0; right:0; z-index: 100;
+    background: rgba(15,17,21,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .navwrap{
+    max-width: 1080px; margin: 0 auto;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 0 24px;
+  }
+  .logo{
+    font-family: var(--font-mono); font-weight:600;
+    font-size: 1rem; padding: 18px 0; color: var(--text);
+  }
+  .logo span{ color: var(--accent); }
+  .tabs{ display:flex; }
+  .tabs li a{
+    display:block;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    padding: 18px 16px;
+    border-right: 1px solid var(--border);
+    border-bottom: 2px solid transparent;
+    transition: color .2s ease, border-color .2s ease, background .2s ease;
+  }
+  .tabs li:first-child a{ border-left: 1px solid var(--border); }
+  .tabs li a:hover{ color: var(--text); background: var(--panel); }
+  .tabs li a.active{ color: var(--accent); border-bottom-color: var(--accent); background: var(--panel); }
+  .navtoggle{ display:none; background:none; border:none; color:var(--text); font-size:1.4rem; cursor:pointer; }
+
+  @media (max-width: 800px){
+    .tabs{
+      position:absolute; top: 100%; left:0; right:0;
+      flex-direction: column; background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      max-height:0; overflow:hidden; transition: max-height .3s ease;
+    }
+    .tabs.open{ max-height: 400px; }
+    .tabs li a{ border:none; border-bottom: 1px solid var(--border); padding: 14px 20px; }
+    .navtoggle{ display:block; }
+  }
+
+  /* ---------- HERO / CODE EDITOR ---------- */
+  .hero{
+    padding-top: 150px;
+    min-height: 92vh;
+    display:flex; flex-direction:column; justify-content:center;
+  }
+  .editor{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow:hidden;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6);
+  }
+  .editor-bar{
+    display:flex; align-items:center; gap:8px;
+    padding: 12px 16px;
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .dot{ width:10px; height:10px; border-radius:50%; }
+  .dot.r{ background:#e5726c; } .dot.y{ background:#e3b341; } .dot.g{ background:#57c7b0; }
+  .editor-bar .fname{ margin-left: 10px; }
+  .editor-body{
+    display:flex;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    padding: 26px 0;
+  }
+  .gutter{
+    color: #4b5160; text-align:right; padding: 0 16px;
+    user-select:none; line-height: 1.9;
+  }
+  .code{ padding-right: 20px; line-height: 1.9; }
+  .code .k{ color: #c792ea; }
+  .code .s{ color: var(--accent-2); }
+  .code .p{ color: var(--text-dim); }
+  .code .v{ color: var(--text); }
+  .cursor{
+    display:inline-block; width:8px; height:1.1em; background: var(--accent);
+    vertical-align: text-bottom; animation: blink 1s step-end infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .hero h1{
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    margin-top: 34px;
+  }
+  .hero p.role{
+    font-family: var(--font-mono);
+    color: var(--accent);
+    margin-top: 8px;
+    font-size: 1.05rem;
+  }
+  .hero-actions{ margin-top: 30px; display:flex; gap:14px; flex-wrap:wrap; }
+
+  .btn{
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    display:inline-flex; align-items:center; gap:8px;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .btn:hover{ transform: translateY(-2px); border-color: var(--accent); }
+  .btn.primary{ background: var(--accent); color:#14161c; border-color: var(--accent); font-weight:600; }
+  .btn.primary:hover{ background:#f0c25c; }
+
+  /* ---------- SHARED SECTION HEAD ---------- */
+  .sec-head{ margin-bottom: 46px; }
+  .sec-head h2{ font-size: clamp(1.5rem, 3vw, 2.1rem); }
+
+  /* reveal on scroll */
+  .reveal{ opacity:0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid; grid-template-columns: 240px 1fr; gap: 50px; align-items:start;
+  }
+  .avatar-frame{
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--panel); padding: 18px;
+  }
+  .about-bio p{ color: var(--text-dim); margin-bottom: 14px; }
+  .about-bio strong{ color: var(--text); }
+  @media (max-width: 700px){ .about-grid{ grid-template-columns: 1fr; } .avatar-frame{ max-width:220px; } }
+
+  /* ---------- SKILLS (skills.json) ---------- */
+  .json-panel{
+    background: var(--panel); border:1px solid var(--border); border-radius: var(--radius);
+    font-family: var(--font-mono); font-size: 0.9rem; padding: 30px;
+  }
+  .json-line{ color: var(--text-dim); }
+  .json-key{ color: var(--accent-2); }
+  .skill-groups{ display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 22px; margin-top: 8px; }
+  .skill-group h4{
+    font-family: var(--font-mono); font-size: 0.82rem; color: var(--accent);
+    margin-bottom: 10px; text-transform: lowercase;
+  }
+  .pill-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .pill{
+    font-family: var(--font-mono); font-size: 0.78rem;
+    padding: 6px 10px; border: 1px solid var(--border); border-radius: 5px;
+    color: var(--text-dim);
+  }
+
+  /* ---------- PROJECTS ---------- */
+  .proj-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 26px; }
+  .card{
+    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow:hidden; transition: border-color .2s ease, transform .2s ease;
+  }
+  .card:hover{ border-color: var(--accent-2); transform: translateY(-4px); }
+  .card-thumb{ aspect-ratio: 16/10; border-bottom:1px solid var(--border); }
+  .card-body{ padding: 20px; }
+  .card-body h3{ font-size: 1.05rem; margin-bottom: 8px; }
+  .card-body p{ color: var(--text-dim); font-size: 0.9rem; margin-bottom: 14px; }
+  .card-links{ display:flex; gap:14px; font-family: var(--font-mono); font-size:0.78rem; }
+  .card-links a{ color: var(--accent-2); }
+  .card-links a:hover{ text-decoration: underline; }
+
+  /* ---------- RESUME ---------- */
+  .resume-box{
+    background: var(--panel); border:1px dashed var(--border); border-radius: var(--radius);
+    padding: 40px; display:flex; align-items:center; justify-content:space-between; gap: 24px; flex-wrap:wrap;
+  }
+  .resume-box .term{ font-family: var(--font-mono); color: var(--text-dim); font-size: 0.9rem; }
+  .resume-box .term span{ color: var(--accent-2); }
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 20px; }
+  .contact-tile{
+    background: var(--panel); border:1px solid var(--border); border-radius: var(--radius);
+    padding: 22px; display:flex; gap:14px; align-items:center;
+  }
+  .contact-tile svg{ flex-shrink:0; }
+  .contact-tile .label{ font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim); }
+  .contact-tile .value{ font-size: 0.95rem; margin-top:2px; }
+  .contact-tile button{
+    background:none; border:1px solid var(--border); color: var(--text-dim);
+    font-family: var(--font-mono); font-size: 0.7rem; padding: 4px 8px; border-radius: 4px;
+    margin-left:auto; cursor:pointer;
+  }
+  .contact-tile button:hover{ border-color: var(--accent-2); color: var(--accent-2); }
+
+  /* ---------- FOOTER / STATUS BAR ---------- */
+  footer{
+    border-top: 1px solid var(--border);
+    background: var(--panel-2);
+    font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim);
+    padding: 14px 24px;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+  footer a{ color: var(--text-dim); }
+  footer a:hover{ color: var(--accent); }
+  footer .flinks{ display:flex; gap:18px; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ transition:none; opacity:1; transform:none; }
+    .cursor{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="navwrap">
+    <div class="logo">&lt;priya<span>.</span>dharshini/&gt;</div>
+    <button class="navtoggle" id="navToggle" aria-label="Toggle menu">☰</button>
+    <ul class="tabs" id="tabs">
+      <li><a href="#home" class="active">index</a></li>
+      <li><a href="#about">about</a></li>
+      <li><a href="#skills">skills</a></li>
+      <li><a href="#projects">projects</a></li>
+      <li><a href="#resume">resume</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ================= HERO ================= --><section class="hero" id="home">
+  <div class="editor reveal">
+    <div class="editor-bar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="fname">index</span>
+    </div>
+    <div class="editor-body">
+      <div class="gutter">1<br>2<br>3<br>4<br>5</div>
+      <div class="code">
+        <div><span class="k">const</span> <span class="v">developer</span> <span class="p">=</span> <span class="p">{</span></div>
+        <div>&nbsp;&nbsp;name: <span class="s">"Priya dharshini"</span>,</div>
+        <div>&nbsp;&nbsp;role: <span class="s" id="typed"></span><span class="cursor"></span></div>
+        <div><span class="p">};</span></div>
+      </div>
+    </div>
+  </div>
+
+
+  <h1 class="reveal">Priyadharshini.V</h1>
+  <p class="role reveal">FullStack Developer </p>
+  <div class="hero-actions reveal">
+    <a href="#projects" class="btn primary">View Projects</a>
+    <a href="#contact" class="btn">Get In Touch</a>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section id="about">
+  <div class="sec-head reveal">
+    <h2>About Me</h2>
+  </div>
+  <div class="about-grid reveal">
+    <div class="avatar-frame">
+      <img src="/photo.jpg.jpeg" alt="My Photo" width="200">
+        <rect width="200" height="200" rx="10" fill="#1d212b"/>
+        <circle cx="100" cy="78" r="38" fill="#2a2f3a"/>
+        <path d="M100 40a38 38 0 0 1 38 38c0 8-2 14-6 20-8-4-20-6-32-6s-24 2-32 6c-4-6-6-12-6-20a38 38 0 0 1 38-38z" fill="#e3b341" opacity="0.85"/>
+        <path d="M40 190c6-34 30-52 60-52s54 18 60 52" fill="#2a2f3a"/>
+        <path d="M40 190c6-34 30-52 60-52s54 18 60 52" fill="none" stroke="#57c7b0" stroke-width="2" opacity="0.5"/>
+    </img>
+    </div>
+    <div class="about-bio">
+      <div class="about-bio">
+    <p>
+        I'm <strong>Priya Dharshini</strong>, an Information Technology student with a passion for Full Stack Web Development and Java programming. I enjoy building responsive websites and learning modern technologies.
+    </p>
+
+    <p>
+        My technical skills include <strong>HTML, CSS, JavaScript, Java, and MySQL</strong>. I have developed academic projects like a Student Management System and a Personal Portfolio.
+    </p>
+
+    <p>
+        I am currently looking for an opportunity to start my career as a <strong>Full Stack Developer</strong> and continuously improve my technical skills.
+    </p>
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SKILLS ================= -->
+<section id="skills">
+  <div class="sec-head reveal">
+    <h2>Skills</h2>
+  </div>
+  <div class="json-panel reveal">
+    <div class="json-line">{</div>
+    <div class="skill-groups">
+      <div class="skill-group">
+        <h4><span class="json-key">"languages"</span>:</h4>
+        <div class="pill-row">
+          <span class="pill">HTML5</span><span class="pill">CSS3</span><span class="pill">JavaScript</span><span class="pill">TypeScript</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h4><span class="json-key">"frameworks"</span>:</h4>
+        <div class="pill-row">
+          <span class="pill">React</span><span class="pill">Next.js</span><span class="pill">Vue</span><span class="pill">Tailwind</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h4><span class="json-key">"tools"</span>:</h4>
+        <div class="pill-row">
+          <span class="pill">Git</span><span class="pill">Figma</span><span class="pill">Webpack</span><span class="pill">Vite</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h4><span class="json-key">"practices"</span>:</h4>
+        <div class="pill-row">
+          <span class="pill">Accessibility</span><span class="pill">Responsive Design</span><span class="pill">Performance</span>
+        </div>
+      </div>
+    </div>
+    <div class="json-line">}</div>
+  </div>
+</section>
+
+<!-- ================= PROJECTS ================= -->
+<section id="projects">
+  <div class="sec-head reveal">
+    <h2>Project</h2>
+  </div>
+  <div class="proj-grid">
+    <div class="card reveal">
+      <div class="card-thumb">
+        <svg viewBox="0 0 400 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="250" fill="#1d212b"/>
+          <rect x="30" y="40" width="140" height="10" rx="4" fill="#e3b341"/>
+          <rect x="30" y="64" width="220" height="8" rx="4" fill="#3a4150"/>
+          <rect x="30" y="82" width="180" height="8" rx="4" fill="#3a4150"/>
+          <rect x="30" y="120" width="90" height="90" rx="8" fill="#57c7b0" opacity="0.85"/>
+          <rect x="140" y="120" width="90" height="90" rx="8" fill="#2a2f3a"/>
+          <rect x="250" y="120" width="90" height="90" rx="8" fill="#e3b341" opacity="0.4"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <h3>Commerce Dashboard</h3>
+        <p>A real-time analytics dashboard for an e-commerce platform, built with React and Recharts, cutting report generation time by 40%.</p>
+        <div class="card-links">
+          <a href="#">Live Site →</a>
+          <a href="#">Source Code →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-thumb">
+        <svg viewBox="0 0 400 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="250" fill="#1d212b"/>
+          <circle cx="200" cy="125" r="70" fill="none" stroke="#57c7b0" stroke-width="3" opacity="0.6"/>
+          <circle cx="200" cy="125" r="46" fill="none" stroke="#e3b341" stroke-width="3" opacity="0.7"/>
+          <circle cx="200" cy="125" r="20" fill="#e3b341"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <h3>Recipe Finder App</h3>
+        <p>A mobile-first recipe search app with saved collections and offline support, built using Vue and a public recipes API.</p>
+        <div class="card-links">
+          <a href="#">Live Site →</a>
+          <a href="#">Source Code →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-thumb">
+        <svg viewBox="0 0 400 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="250" fill="#1d212b"/>
+          <rect x="40" y="180" width="30" height="40" fill="#e3b341"/>
+          <rect x="90" y="140" width="30" height="80" fill="#57c7b0"/>
+          <rect x="140" y="100" width="30" height="120" fill="#e3b341" opacity="0.6"/>
+          <rect x="190" y="150" width="30" height="70" fill="#3a4150"/>
+          <rect x="240" y="70" width="30" height="150" fill="#57c7b0" opacity="0.5"/>
+          <rect x="290" y="120" width="30" height="100" fill="#e3b341" opacity="0.8"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <h3>Design System Library</h3>
+        <p>A shared component library and Storybook docs adopted across three product teams, improving UI consistency company-wide.</p>
+        <div class="card-links">
+          <a href="#">Live Site →</a>
+          <a href="#">Source Code →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RESUME ================= -->
+<section id="resume">
+  <div class="sec-head reveal">
+    <h2>My Resume</h2>
+  </div>
+  <div class="resume-box reveal">
+    <div class="term"> <span></span> resume.pdf</div>
+    <a href="resume.3.pdf" download class="btn primary">⬇ Download PDF</a>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section id="contact">
+  <div class="sec-head reveal">
+    <h2>Contact</h2>
+  </div>
+  <div class="contact-grid reveal">
+    <div class="contact-tile">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e3b341" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>
+      <div>
+        <div class="label">EMAIL</div>
+        <div class="value" id="emailVal">jeevithapriyadharshini1@gmail.com</div>
+      </div>
+      
+    </div>
+    <div class="contact-tile">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#57c7b0" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .7 3a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.2-1.3a2 2 0 0 1 2.1-.5c1 .4 2 .6 3 .7a2 2 0 0 1 1.7 2z"/></svg>
+      <div>
+        <div class="label">PHONE</div>
+        <div class="value" id="phoneVal">+91 9791794247</div>
+      </div>
+      <button onclick="copyText('phoneVal', this)">copy</button>
+    </div>
+    <div class="contact-tile">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e3b341" stroke-width="2"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M2 12h20M12 2c2.5 2.7 4 6.2 4 10s-1.5 7.3-4 10c-2.5-2.7-4-6.2-4-10s1.5-7.3 4-10z"/></svg>
+      <div>
+        <div class="label">LOCATION</div>
+        <div class="value">N0.23 Bharathi Street jeevanandhapuram Lawspet puducherry 605 008.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© <span id="year"></span> Priya Dharshini. All rights reserved.</span>
+  <span class="flinks">
+    <a href="#">GitHub</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Twitter</a>
+  </span>
+</footer>
+
+<script>
+  // Year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const tabs = document.getElementById('tabs');
+  navToggle.addEventListener('click', () => tabs.classList.toggle('open'));
+  tabs.querySelectorAll('a').forEach(a => a.addEventListener('click', () => tabs.classList.remove('open')));
+
+  // Active tab highlighting on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.tabs a');
+  const setActive = () => {
+    let current = sections[0].id;
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 140) current = sec.id;
+    });
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  };
+  window.addEventListener('scroll', setActive);
+  setActive();
+
+  // Typing effect in hero
+  const roles = ['"Fullstack Developer"'];
+  const typedEl = document.getElementById('typed');
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let ri = 0, ci = 0, deleting = false;
+
+  function typeLoop(){
+    const word = roles[ri];
+    if(!deleting){
+      ci++;
+      typedEl.textContent = word.slice(0, ci);
+      if(ci === word.length){ deleting = true; setTimeout(typeLoop, 1400); return; }
+    } else {
+      ci--;
+      typedEl.textContent = word.slice(0, ci);
+      if(ci === 0){ deleting = false; ri = (ri + 1) % roles.length; }
+    }
+    setTimeout(typeLoop, deleting ? 40 : 80);
+  }
+  if(prefersReduced){ typedEl.textContent = roles[0]; } else { typeLoop(); }
+
+  // Reveal on scroll
+  const revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !prefersReduced){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('in'));
+  }
+
+  // Copy contact info
+  function copyText(id, btn){
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const old = btn.textContent;
+      btn.textContent = 'copied';
+      setTimeout(() => btn.textContent = old, 1500);
+    });
+  }
+</script>
+
+</body>
+</html>
